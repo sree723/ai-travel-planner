@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Your Trip Memories</title>
+<style>
+body {
+    background: #111;
+    color: white;
+    font-family: Arial;
+}
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+}
+.card {
+    background: rgba(255,255,255,0.1);
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+img {
+    max-width: 100%;
+    border-radius: 10px;
+}
+a {
+    color: #00ffd5;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>{{ trip.from_city }} → {{ trip.destination }}</h1>
+
+<a href="{% url 'add_memory' trip.id %}">➕ Add Memory</a>
+
+{% for mem in memories %}
+<div class="card">
+    <h3>Day {{ mem.day }}</h3>
+    <p>{{ mem.note }}</p>
+
+    {% if mem.photo %}
+        <img src="{{ mem.photo.url }}">
+    {% endif %}
+</div>
+{% empty %}
+<p>No memories yet. Start adding your experience.</p>
+{% endfor %}
+</div>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+{% extends "planner/base.html" %}
+{% block content %}
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+.page-wrap {
+  min-height: 100vh;
+  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+              url("https://images.unsplash.com/1501785888041-af3ef285b470") no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.glass-card {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(15px);
+  padding: 30px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 600px;
+  color: white;
+  box-shadow: 0 0 40px rgba(0,255,200,0.2);
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  margin-top: 15px;
+  padding: 12px;
+  width: 100%;
+  background: #00ffd5;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#map {
+  height: 300px;
+  border-radius: 15px;
+  margin-top: 15px;
+}
+</style>
+
+<div class="page-wrap">
+  <div class="glass-card">
+    <h2>📍 Add a Hidden Place</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <input name="destination" placeholder="Destination (Ex: Pondicherry)" required>
+      <input name="title" placeholder="Hidden Place Name" required>
+
+      <textarea name="description" placeholder="Why is this place special?" required></textarea>
+
+      <label>📌 Click on map to select location</label>
+      <div id="map"></div>
+
+      <!-- Hidden auto-filled fields -->
+      <input type="hidden" name="latitude" id="lat">
+      <input type="hidden" name="longitude" id="lng">
+
+      <label>📸 Upload Photo</label>
+      <input type="file" name="photo">
+
+      <button type="submit">Submit Hidden Place</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  var map = L.map('map').setView([20.5937, 78.9629], 5); // India center
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(map);
+
+  var marker;
+
+  map.on('click', function(e) {
+    if (marker) {
+      map.removeLayer(marker);
+    }
+
+    marker = L.marker(e.latlng).addTo(map);
+
+    document.getElementById("lat").value = e.latlng.lat.toFixed(6);
+    document.getElementById("lng").value = e.latlng.lng.toFixed(6);
+  });
+</script>
+
+{% endblock %}

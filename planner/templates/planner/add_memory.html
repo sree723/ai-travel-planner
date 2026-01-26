@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add Memory</title>
+<style>
+body {
+    background: black;
+    color: white;
+    font-family: Arial;
+}
+.box {
+    max-width: 400px;
+    margin: 80px auto;
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 12px;
+}
+input, textarea {
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px;
+}
+button {
+    margin-top: 15px;
+    width: 100%;
+    padding: 10px;
+    background: #00ffd5;
+    border: none;
+    border-radius: 8px;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>Add Memory for {{ trip.destination }}</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <label>Day</label>
+    <input type="number" name="day" min="1" required>
+
+    <label>Note</label>
+    <textarea name="note"></textarea>
+
+    <label>Photo</label>
+    <input type="file" name="photo">
+
+    <button type="submit">Save Memory</button>
+</form>
+</div>
+
+</body>
+</html>

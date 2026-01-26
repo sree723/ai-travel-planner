@@ -1,0 +1,104 @@
+{% extends 'planner/base.html' %}
+{% block content %}
+
+<style>
+.page-wrap {
+    min-height: 100vh;
+    background: 
+      linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+      url("https://images.unsplash.com/1493558103817-58b2924bce98") no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.glass-card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(15px);
+    padding: 40px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 450px;
+    color: white;
+    box-shadow: 0 0 40px rgba(0,255,200,0.2);
+}
+
+.glass-card h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.glass-card label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.glass-card input,
+.glass-card select,
+.glass-card textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 8px;
+    border: none;
+}
+
+.glass-card button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: #00ffd5;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.glass-card button:hover {
+    background: #00ccaa;
+}
+</style>
+
+<div class="page-wrap">
+  <div class="glass-card">
+    <h2>✈️ Plan Your AI Journey</h2>
+
+    <form method="POST" action="{% url 'plan' %}">
+      {% csrf_token %}
+
+      <label>From (Your City)</label>
+      <input name="from_city" placeholder="e.g. Chennai, Mumbai, Delhi" required>
+
+      <label>Destination</label>
+      <input name="destination" placeholder="e.g. New York, Paris, Tokyo" required>
+
+      <label>Budget (INR)</label>
+      <input type="number" name="budget" placeholder="200000" required>
+
+      <label>Travel Style</label>
+      <select name="style">
+          <option>Adventure</option>
+          <option>Luxury</option>
+          <option>Family</option>
+          <option>Solo</option>
+      </select>
+
+      <label>Extra Notes</label>
+      <textarea name="notes" placeholder="Hiking, beaches, food, nightlife..."></textarea>
+      <script>
+      document.querySelector("form").addEventListener("submit", function() {
+      const btn = this.querySelector("button");
+      btn.innerText = "Generating AI Magic...";
+      btn.disabled = true;
+      });
+      </script>
+
+      <button type="submit">Generate AI Experience</button>
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

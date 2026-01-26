@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Travel Planner</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'planner/css/style.css' %}">
+    <link rel="icon" href="{% static 'planner/images/favicon.ico' %}">
+
+</head>
+<body>
+
+    <nav>
+        <h2>🌍 AI Travel Planner</h2>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/plan/">Plan Trip</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    <a href="{% url 'hidden_map' %}">🗺️ Hidden Gems</a>
+
+
+</body>
+</html>

@@ -1,0 +1,116 @@
+{% extends "planner/base.html" %}
+{% block content %}
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+#map {
+  height: 90vh;
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(0,255,200,.3);
+}
+.map-header {
+  color: white;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.add-btn {
+  background: #00ffd5;
+  color: black;
+  padding: 10px 15px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: bold;
+}
+</style>
+
+<div class="map-header">
+  <h2>🗺️ Hidden Gems Map</h2>
+  <a class="add-btn" href="{% url 'add_hidden_place' %}">
+    ➕ Add Secret Place
+  </a>
+</div>
+
+<div id="map"></div>
+
+<script>
+var map = L.map('map').setView([20.5937, 78.9629], 5); // India center
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18
+}).addTo(map);
+
+// Existing markers
+{% for p in places %}
+L.marker([{{ p.latitude }}, {{ p.longitude }}]).addTo(map)
+  .bindPopup(`
+    <b>{{ p.title }}</b><br>
+    {{ p.description }}<br>
+    <i>{{ p.destination }}</i>
+    <form method="POST" action="{% url 'delete_hidden_place' p.id %}">
+      {% csrf_token %}
+      <button style="
+        background:#ff3b3b;
+        color:white;
+        border:none;
+        padding:6px 10px;
+        border-radius:6px;
+        margin-top:5px;
+        cursor:pointer;
+      ">🗑 Delete</button>
+    </form>
+  `);
+{% endfor %}
+
+// Click-to-add system
+var tempMarker = null;
+
+map.on("click", function(e) {
+  if (tempMarker) {
+    map.removeLayer(tempMarker);
+  }
+
+  tempMarker = L.marker(e.latlng).addTo(map);
+
+  var popupForm = `
+    <form method="POST" action="{% url 'add_hidden_place' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <b>Add Hidden Place</b><br><br>
+
+      <input type="hidden" name="latitude" value="${e.latlng.lat}">
+      <input type="hidden" name="longitude" value="${e.latlng.lng}">
+
+      <input name="destination" placeholder="Destination" required style="width:100%; margin-bottom:5px;"><br>
+      <input name="title" placeholder="Place title" required style="width:100%; margin-bottom:5px;"><br>
+
+      <textarea name="description" placeholder="Why is this place special?" required style="width:100%; margin-bottom:5px;"></textarea>
+
+      <input type="file" name="photo" accept="image/*" style="margin-bottom:5px;"><br>
+
+      <button style="
+        background:#00ffd5;
+        border:none;
+        padding:8px;
+        width:100%;
+        border-radius:8px;
+        cursor:pointer;
+        font-weight:bold;
+      ">
+        🚀 Submit Place
+      </button>
+    </form>
+  `;
+
+    tempMarker.bindPopup(popupForm).openPopup();
+});
+</script>
+
+{% endblock %}
+
