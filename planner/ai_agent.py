@@ -1,33 +1,15 @@
-from google import genai
-from django.conf import settings
-import time
-import json
-import re
-
-# Create Gemini client
-client = genai.Client(api_key=settings.GEMINI_API_KEY)
-
-
-def extract_json(text):
-    """
-    Extracts the first valid JSON object found in a string.
-    Protects against AI adding explanations or extra text.
-    """
+def safe_print(text):
     try:
-        match = re.search(r"\{.*\}", text, re.DOTALL)
-        if not match:
-            return None
-        return json.loads(match.group())
+        print(str(text).encode("utf-8", "ignore").decode())
     except Exception:
-        return None
-
-
+        print("[AI OUTPUT: UNPRINTABLE DATA]")
 def planner_agent(user_data):
     prompt = f"""
 You are a professional travel planning system.
 
 STRICT RULES:
 - Output ONLY valid JSON
+- Use ONLY English characters
 - No markdown
 - No explanations
 - No extra text
@@ -82,8 +64,14 @@ Return JSON in EXACT format:
         elapsed = round(time.time() - start_time, 2)
         print(f"AI: Response received in {elapsed} seconds")
 
-        raw_text = response.text.strip()
-        print("AI RAW OUTPUT:\n", raw_text)
+        # -------- SAFE EXTRACTION (NO PRINTING RAW OBJECTS) --------
+        try:
+            raw_text = response.candidates[0].content.parts[0].text
+        except Exception:
+            return {"error": "AI returned empty response"}
+
+        # -------- SANITIZE BEFORE USING --------
+        raw_text = raw_text.encode("ascii", "ignore").decode().strip()
 
         data = extract_json(raw_text)
 
@@ -93,5 +81,5 @@ Return JSON in EXACT format:
         return data
 
     except Exception as e:
-        print("AI ERROR:", str(e))
+        print(f"AI ERROR: {e}")
         return {"error": "AI service is currently unavailable"}

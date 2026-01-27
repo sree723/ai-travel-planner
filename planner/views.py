@@ -1,15 +1,27 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_POST
+from datetime import datetime, timedelta, date
+
 from .ai_agent import planner_agent
 from .free_images import get_place_image
 from .trust_engine import evaluate_plan
-from .models import Trip, TripMemory, HiddenPlace
-from datetime import datetime, timedelta
+
+from .models import (
+    Trip,
+    TripMemory,
+    HiddenPlace,
+    TripPlan
+)
 
 # -------------------
 # HOME PAGE
 # -------------------
 def home(request):
-    return render(request, "planner/home.html")
+    trips = TripPlan.objects.all().order_by("-created_at")[:5]
+
+    return render(request, "planner/home.html", {
+        "trips": trips
+    })
 
 
 # -------------------
@@ -44,12 +56,23 @@ def plan(request):
             result = planner_agent(data)
             print("AI RESULT:", result)
 
-            # Save result in session
+            # Save AI result in session
             request.session["result"] = result
             request.session.modified = True
 
             # -------------------
-            # SAVE TRIP TO DB
+            # SAVE PLAN MEMORY (AI HISTORY)
+            # -------------------
+            TripPlan.objects.create(
+                from_city=from_city,
+                destination=destination,
+                start_date=date.today(),
+                end_date=date.today() + timedelta(days=3),
+                days=3
+            )
+
+            # -------------------
+            # SAVE USER TRIP
             # -------------------
             start_date = datetime.today().date()
             days = 3
@@ -185,11 +208,46 @@ def add_hidden_place(request):
         return redirect("hidden_map")
 
     return render(request, "planner/add_hidden_place.html")
-from .models import HiddenPlace
-from django.views.decorators.http import require_POST
 
+
+# -------------------
+# DELETE HIDDEN PLACE
+# -------------------
 @require_POST
 def delete_hidden_place(request, place_id):
     place = get_object_or_404(HiddenPlace, id=place_id)
     place.delete()
     return redirect("hidden_map")
+# -------------------
+# DEMO MODE (NO AI, NO API KEY)
+# -------------------
+def demo_result(request):
+    demo = {
+        "route": {
+            "from": "Chennai",
+            "to": "Ooty",
+            "best_mode": "Car",
+            "options": [
+                {"mode": "Car", "time": "10 hrs", "cost": "₹4000"}
+            ]
+        },
+        "itinerary": [
+            {"day": 1, "title": "Doddabetta Peak", "plan": "Sunrise view and photography", "photo": "https://source.unsplash.com/800x600/?mountains"},
+            {"day": 2, "title": "Botanical Garden", "plan": "Nature walk and local snacks", "photo": "https://source.unsplash.com/800x600/?garden"},
+        ],
+        "budget_summary": {
+            "travel": "₹4000",
+            "stay": "₹3000",
+            "food": "₹1500",
+            "activities": "₹500",
+            "total": "₹9000"
+        },
+        "trust": ["Demo mode — AI bypassed", "Static verified travel data"]
+    }
+
+    return render(request, "planner/result.html", {
+        "result": demo,
+        "trip_id": None,
+        "error": None
+    })
+

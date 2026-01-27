@@ -10,16 +10,13 @@
 
 <style>
 #map {
-  height: 90vh;
+  height: 80vh;
   border-radius: 20px;
   box-shadow: 0 0 40px rgba(0,255,200,.3);
 }
 .map-header {
   color: white;
-  margin-bottom: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  margin-bottom: 10px;
 }
 .add-btn {
   background: #00ffd5;
@@ -28,6 +25,13 @@
   border-radius: 10px;
   text-decoration: none;
   font-weight: bold;
+}
+#searchBox {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border: none;
 }
 </style>
 
@@ -38,18 +42,22 @@
   </a>
 </div>
 
+<input id="searchBox" placeholder="Search by place, destination or keyword...">
+
 <div id="map"></div>
 
 <script>
-var map = L.map('map').setView([20.5937, 78.9629], 5); // India center
+var map = L.map('map').setView([20.5937, 78.9629], 5);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18
 }).addTo(map);
 
-// Existing markers
+// Store markers for filtering
+var markers = [];
+
 {% for p in places %}
-L.marker([{{ p.latitude }}, {{ p.longitude }}]).addTo(map)
+var marker = L.marker([{{ p.latitude }}, {{ p.longitude }}])
   .bindPopup(`
     <b>{{ p.title }}</b><br>
     {{ p.description }}<br>
@@ -67,9 +75,26 @@ L.marker([{{ p.latitude }}, {{ p.longitude }}]).addTo(map)
       ">🗑 Delete</button>
     </form>
   `);
+
+marker.searchText = "{{ p.title|lower }} {{ p.description|lower }} {{ p.destination|lower }}";
+marker.addTo(map);
+markers.push(marker);
 {% endfor %}
 
-// Click-to-add system
+// SEARCH SYSTEM
+document.getElementById("searchBox").addEventListener("input", function(e) {
+  var value = e.target.value.toLowerCase();
+
+  markers.forEach(marker => {
+    if (marker.searchText.includes(value)) {
+      marker.addTo(map);
+    } else {
+      map.removeLayer(marker);
+    }
+  });
+});
+
+// CLICK TO ADD SYSTEM
 var tempMarker = null;
 
 map.on("click", function(e) {
@@ -108,9 +133,8 @@ map.on("click", function(e) {
     </form>
   `;
 
-    tempMarker.bindPopup(popupForm).openPopup();
+  tempMarker.bindPopup(popupForm).openPopup();
 });
 </script>
 
 {% endblock %}
-

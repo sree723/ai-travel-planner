@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>AI Travel Planner</title>
+
 <style>
 body {
     margin: 0;
@@ -12,27 +13,36 @@ body {
     background-size: cover;
     color: white;
 }
+
 .hero {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
+    flex-direction: column;
 }
+
 .hero-box {
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.75);
     padding: 40px;
     border-radius: 20px;
+    max-width: 700px;
 }
+
 .hero-box h1 {
     font-size: 3em;
+    margin-bottom: 10px;
 }
+
 .hero-box p {
     font-size: 1.2em;
+    margin-bottom: 20px;
 }
+
 .button {
     display: inline-block;
-    margin-top: 20px;
+    margin: 10px;
     padding: 15px 30px;
     background: #00ffd5;
     color: black;
@@ -40,15 +50,64 @@ body {
     border-radius: 10px;
     font-weight: bold;
 }
+
+.button.secondary {
+    background: transparent;
+    color: #00ffd5;
+    border: 2px solid #00ffd5;
+}
+
+/* HISTORY SECTION */
+.history {
+    width: 90%;
+    max-width: 900px;
+    margin-top: 40px;
+}
+
+.card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 0 20px rgba(0,255,200,.2);
+    text-align: left;
+}
 </style>
 </head>
+
 <body>
 
 <div class="hero">
     <div class="hero-box">
         <h1>🌍 Plan Smarter. Travel Better.</h1>
-        <p>Your AI-powered travel assistant for routes, stays, and budgets.</p>
-        <a href="/plan/" class="button">Start Planning</a>
+        <p>
+            An AI-powered travel system that generates routes, budgets, itineraries, 
+            and validates plans with a built-in trust engine.
+        </p>
+
+        <a href="/plan/" class="button">🚀 Start Planning</a>
+        <a href="/demo/" class="button secondary">✨ Try Demo Plan</a>
+    </div>
+
+    <!-- TRAVEL HISTORY -->
+    <div class="history">
+        <h2>🧠 Your Travel History</h2>
+
+        {% if trips %}
+            {% for t in trips %}
+                <div class="card">
+                    <b>{{ t.from_city }}</b> → <b>{{ t.destination }}</b><br>
+                    <small>
+                        {{ t.start_date }} to {{ t.end_date }} • {{ t.days }} days
+                    </small>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="card">
+                No past trips yet. Generate your first AI plan or try the demo mode.
+            </div>
+        {% endif %}
     </div>
 </div>
 
