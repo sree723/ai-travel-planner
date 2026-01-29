@@ -1,4 +1,4 @@
-from google import genai
+import google.generativeai as genai
 from django.conf import settings
 import time
 import json
