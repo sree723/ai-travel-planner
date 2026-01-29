@@ -1,115 +1,138 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>AI Travel Planner</title>
+{% extends 'planner/base.html' %}
+{% block content %}
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: 
-      linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-      url("https://images.unsplash.com/1500530855697-b586d89ba3ee") no-repeat center center fixed;
-    background-size: cover;
-    color: white;
-}
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
 
-.hero {
+.hero-section {
     min-height: 100vh;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: 
+        linear-gradient(rgba(10, 20, 40, 0.6), rgba(10, 20, 40, 0.9)),
+        url("https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1920&q=80") no-repeat center center fixed;
+    background-size: cover;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
     flex-direction: column;
-}
-
-.hero-box {
-    background: rgba(0,0,0,0.75);
-    padding: 40px;
-    border-radius: 20px;
-    max-width: 700px;
-}
-
-.hero-box h1 {
-    font-size: 3em;
-    margin-bottom: 10px;
-}
-
-.hero-box p {
-    font-size: 1.2em;
-    margin-bottom: 20px;
-}
-
-.button {
-    display: inline-block;
-    margin: 10px;
-    padding: 15px 30px;
-    background: #00ffd5;
-    color: black;
-    text-decoration: none;
-    border-radius: 10px;
-    font-weight: bold;
-}
-
-.button.secondary {
-    background: transparent;
-    color: #00ffd5;
-    border: 2px solid #00ffd5;
-}
-
-/* HISTORY SECTION */
-.history {
-    width: 90%;
-    max-width: 900px;
-    margin-top: 40px;
-}
-
-.card {
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(12px);
-    border-radius: 15px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
     padding: 20px;
-    margin-bottom: 15px;
-    box-shadow: 0 0 20px rgba(0,255,200,.2);
-    text-align: left;
+}
+
+.hero-content h1 {
+    font-size: 4.5rem;
+    font-weight: 800;
+    letter-spacing: -3px;
+    margin-bottom: 20px;
+    background: linear-gradient(to right, #ffffff, #d4af37);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    max-width: 600px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+}
+
+.cta-group {
+    display: flex;
+    gap: 20px;
+}
+
+.btn-luxury {
+    padding: 18px 35px;
+    border-radius: 50px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    transition: all 0.4s ease;
+}
+
+.btn-main {
+    background: linear-gradient(45deg, #d4af37, #f9f295);
+    color: #0a1428;
+}
+
+.btn-outline {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    backdrop-filter: blur(10px);
+}
+
+.btn-luxury:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.3);
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 30px;
+    animation: bounce 2s infinite;
+    opacity: 0.5;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-10px);}
+    60% {transform: translateY(-5px);}
 }
 </style>
-</head>
 
-<body>
-
-<div class="hero">
-    <div class="hero-box">
-        <h1>🌍 Plan Smarter. Travel Better.</h1>
-        <p>
-            An AI-powered travel system that generates routes, budgets, itineraries, 
-            and validates plans with a built-in trust engine.
-        </p>
-
-        <a href="/plan/" class="button">🚀 Start Planning</a>
-        <a href="/demo/" class="button secondary">✨ Try Demo Plan</a>
+<div class="hero-section">
+    <div class="hero-content">
+        <p style="letter-spacing: 8px; text-transform: uppercase; color: #d4af37;">Future of Travel</p>
+        <h1>Plan Smarter.<br>Travel Better.</h1>
+        <p>Your personal AI concierge for bespoke itineraries, verified routes, and curated luxury stays across the globe.</p>
+        
+        <div class="cta-group">
+            <a href="{% url 'plan' %}" class="btn-luxury btn-main">🚀 Start Planning</a>
+            <a href="{% url 'demo_result' %}" class="btn-luxury btn-outline">✨ Try Demo Plan</a>
+        </div>
     </div>
 
-    <!-- TRAVEL HISTORY -->
-    <div class="history">
-        <h2>🧠 Your Travel History</h2>
-
-        {% if trips %}
-            {% for t in trips %}
-                <div class="card">
-                    <b>{{ t.from_city }}</b> → <b>{{ t.destination }}</b><br>
-                    <small>
-                        {{ t.start_date }} to {{ t.end_date }} • {{ t.days }} days
-                    </small>
-                </div>
-            {% endfor %}
-        {% else %}
-            <div class="card">
-                No past trips yet. Generate your first AI plan or try the demo mode.
-            </div>
-        {% endif %}
+    <div class="scroll-indicator">
+        <p style="font-size: 0.7rem; letter-spacing: 2px;">SCROLL TO DISCOVER</p>
+        <span>▼</span>
     </div>
 </div>
 
-</body>
-</html>
+<div style="background: #0a1428; padding: 100px 20px;">
+    <div style="max-width: 1000px; margin: 0 auto;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 50px;">
+            <h2 style="color: white; font-size: 2.5rem; font-family: 'Plus Jakarta Sans';">Your Expedition Log</h2>
+            <p style="color: #d4af37;">{{ trips|length }} Past Journeys</p>
+        </div>
+
+        <div style="display: grid; gap: 20px;">
+            {% for trip in trips %}
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+                <div>
+                    <h3 style="color: white; margin: 0; font-size: 1.4rem;">{{ trip.from_city }} → {{ trip.destination }}</h3>
+                    <p style="color: rgba(255,255,255,0.5); margin: 5px 0 0;">{{ trip.created_at|date:"M d, Y" }} • {{ trip.days }} Days</p>
+                </div>
+                
+                <div style="display: flex; gap: 15px;">
+                    <a href="#" style="color: #d4af37; text-decoration: none; font-weight: 600;">View Details</a>
+                    
+                    <form action="{% url 'delete_trip' trip.id %}" method="POST" style="margin:0;">
+                        {% csrf_token %}
+                        <button type="submit" style="background: none; border: none; color: #ff4b2b; cursor: pointer; font-weight: 600;" onclick="return confirm('Archive this journey?')">Delete</button>
+                    </form>
+                </div>
+            </div>
+            {% empty %}
+            <div style="text-align: center; padding: 50px; color: rgba(255,255,255,0.3);">
+                <p>No past expeditions found. Your journey begins here.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

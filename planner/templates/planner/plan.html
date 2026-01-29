@@ -2,101 +2,199 @@
 {% block content %}
 
 <style>
+/* PREMIUM UI OVERHAUL */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+
 .page-wrap {
     min-height: 100vh;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     background: 
-      linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-      url("https://images.unsplash.com/1493558103817-58b2924bce98") no-repeat center center fixed;
+        linear-gradient(rgba(10, 20, 40, 0.75), rgba(10, 20, 40, 0.75)),
+        url("https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1920&q=80") no-repeat center center fixed;
     background-size: cover;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 20px;
 }
 
-.glass-card {
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(15px);
-    padding: 40px;
-    border-radius: 20px;
+.premium-glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    padding: 50px;
+    border-radius: 30px;
     width: 100%;
-    max-width: 450px;
+    max-width: 550px;
     color: white;
-    box-shadow: 0 0 40px rgba(0,255,200,0.2);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 0 1px rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.glass-card h2 {
+.premium-glass-card h2 {
     text-align: center;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 30px;
+    font-size: 2rem;
+    background: linear-gradient(to right, #ffffff, #d4af37);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+.input-group {
     margin-bottom: 20px;
 }
 
-.glass-card label {
+.premium-glass-card label {
     display: block;
-    margin-top: 15px;
-    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.glass-card input,
-.glass-card select,
-.glass-card textarea {
+.premium-glass-card input,
+.premium-glass-card select,
+.premium-glass-card textarea {
     width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 8px;
-    border: none;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
-.glass-card button {
-    margin-top: 20px;
+.premium-glass-card input:focus,
+.premium-glass-card select:focus,
+.premium-glass-card textarea:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #d4af37;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+.premium-glass-card select option {
+    background: #0a1428;
+    color: white;
+}
+
+.btn-luxury {
+    margin-top: 30px;
     width: 100%;
-    padding: 12px;
-    border-radius: 10px;
+    padding: 18px;
+    border-radius: 15px;
     border: none;
-    background: #00ffd5;
-    font-weight: bold;
+    background: linear-gradient(45deg, #d4af37, #f9f295);
+    color: #0d1b2a;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
 }
 
-.glass-card button:hover {
-    background: #00ccaa;
+.btn-luxury:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.4);
+    filter: brightness(1.1);
+}
+
+.btn-luxury:disabled {
+    background: #666;
+    transform: none;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Subtle animation for the card */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.premium-glass-card {
+    animation: fadeInUp 0.8s ease-out;
 }
 </style>
 
 <div class="page-wrap">
-  <div class="glass-card">
-    <h2>✈️ Plan Your AI Journey</h2>
+  <div class="premium-glass-card">
+    <h2>✨ Create Your Elite Escape</h2>
 
     <form method="POST" action="{% url 'plan' %}">
       {% csrf_token %}
 
-      <label>From (Your City)</label>
-      <input name="from_city" placeholder="e.g. Chennai, Mumbai, Delhi" required>
+      <div class="form-grid">
+          <div class="input-group">
+            <label>Departure City</label>
+            <input name="from_city" placeholder="e.g. London" required>
+          </div>
 
-      <label>Destination</label>
-      <input name="destination" placeholder="e.g. New York, Paris, Tokyo" required>
+          <div class="input-group">
+            <label>Destination</label>
+            <input name="destination" placeholder="e.g. Maldives" required>
+          </div>
 
-      <label>Budget (INR)</label>
-      <input type="number" name="budget" placeholder="200000" required>
+          <div class="input-group">
+            <label>Trip Duration (Days)</label>
+            <input type="number" name="days" value="3" min="1" max="14" required>
+          </div>
 
-      <label>Travel Style</label>
-      <select name="style">
-          <option>Adventure</option>
-          <option>Luxury</option>
-          <option>Family</option>
-          <option>Solo</option>
-      </select>
+          <div class="input-group">
+            <label>Travelers</label>
+            <input type="number" name="members" value="1" min="1" max="20" required>
+          </div>
 
-      <label>Extra Notes</label>
-      <textarea name="notes" placeholder="Hiking, beaches, food, nightlife..."></textarea>
-      <script>
-      document.querySelector("form").addEventListener("submit", function() {
-      const btn = this.querySelector("button");
-      btn.innerText = "Generating AI Magic...";
-      btn.disabled = true;
-      });
-      </script>
+          <div class="input-group">
+            <label>Budget (INR)</label>
+            <input type="number" name="budget" placeholder="e.g. 500000" required>
+          </div>
 
-      <button type="submit">Generate AI Experience</button>
+          <div class="input-group">
+            <label>Experience Style</label>
+            <select name="style">
+                <option value="Luxury">Ultra Luxury</option>
+                <option value="Adventure">Bespoke Adventure</option>
+                <option value="Family">Family Retreat</option>
+                <option value="Solo">Solo Expedition</option>
+                <option value="Romantic">Romantic Getaway</option>
+            </select>
+          </div>
+
+          <div class="input-group full-width">
+            <label>Personal Preferences</label>
+            <textarea name="notes" rows="3" placeholder="Fine dining, private villas, yacht rentals..."></textarea>
+          </div>
+      </div>
+
+      <button type="submit" id="submit-btn">Curate My Experience</button>
     </form>
+
+    <script>
+      document.querySelector("form").addEventListener("submit", function() {
+        const btn = document.getElementById("submit-btn");
+        btn.innerHTML = '<span style="display:flex; align-items:center; justify-content:center;">Designing Your Journey...</span>';
+        btn.disabled = true;
+      });
+    </script>
 
   </div>
 </div>

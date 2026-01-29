@@ -7,8 +7,8 @@ urlpatterns = [
     path("plan/", views.plan, name="plan"),
     path("result/", views.result, name="result"),
 
-    # Demo Mode
-    path("demo/", views.demo_result, name="demo"),
+    # Demo Mode (FIXED NAME HERE)
+    path("demo/", views.demo_result, name="demo_result"),
 
     # Trips & Memories
     path("trip/<int:trip_id>/", views.trip_dashboard, name="trip_dashboard"),
@@ -18,4 +18,8 @@ urlpatterns = [
     path("map/", views.hidden_map, name="hidden_map"),
     path("add-place/", views.add_hidden_place, name="add_hidden_place"),
     path("delete-place/<int:place_id>/", views.delete_hidden_place, name="delete_hidden_place"),
+
+    # AI Smart Feature
+    path("regenerate-day/", views.regenerate_day, name="regenerate_day"),
+    path('delete-trip/<int:trip_id>/', views.delete_trip, name='delete_trip'),
 ]

@@ -10,15 +10,28 @@
 
 </head>
 <body>
+    <nav style="
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 40px;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(12px);
+  position:sticky;
+  top:0;
+  z-index:1000;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+">
+  <h2 style="margin:0; color:#00ffd5;">🌍 AI Travel Planner</h2>
 
-    <nav>
-        <h2>🌍 AI Travel Planner</h2>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/plan/">Plan Trip</a></li>
-        </ul>
-    </nav>
+  <ul style="list-style:none; display:flex; gap:25px; margin:0;">
+    <li><a href="/" style="color:white; text-decoration:none;">Home</a></li>
+    <li><a href="/plan/" style="color:white; text-decoration:none;">Plan Trip</a></li>
+    <li><a href="{% url 'hidden_map' %}" style="color:#00ffd5; text-decoration:none;">Hidden Gems</a></li>
+  </ul>
+</nav>
 
+   
     <main>
         {% block content %}
         {% endblock %}

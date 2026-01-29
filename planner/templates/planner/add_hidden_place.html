@@ -1,106 +1,353 @@
-{% extends "planner/base.html" %}
+{% extends 'planner/base.html' %}
 {% block content %}
 
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
 <style>
-.page-wrap {
-  min-height: 100vh;
-  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
-              url("https://images.unsplash.com/1501785888041-af3ef285b470") no-repeat center center fixed;
-  background-size: cover;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* PREMIUM TYPOGRAPHY & COLORS */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+:root {
+    --gold: #d4af37;
+    --dark-bg: #0a0e17;
+    --glass-border: rgba(255, 255, 255, 0.1);
 }
 
-.glass-card {
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(15px);
-  padding: 30px;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 600px;
-  color: white;
-  box-shadow: 0 0 40px rgba(0,255,200,0.2);
+.add-page-wrap {
+    min-height: 100vh;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    /* High-end dark travel background */
+    background: 
+        linear-gradient(rgba(10, 14, 23, 0.85), rgba(10, 14, 23, 0.95)),
+        url("https://images.unsplash.com/photo-1542640244-7e672d6bd4e8?auto=format&fit=crop&w=1920&q=80") no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
 }
 
-input, textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 8px;
-  border: none;
+.premium-card {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 40px;
+    width: 100%;
+    max-width: 1000px;
+    color: white;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
 }
 
-button {
-  margin-top: 15px;
-  padding: 12px;
-  width: 100%;
-  background: #00ffd5;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
+.card-header {
+    text-align: center;
+    margin-bottom: 40px;
 }
 
-#map {
-  height: 300px;
-  border-radius: 15px;
-  margin-top: 15px;
+.card-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(to right, #fff, var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+
+/* LAYOUT GRID */
+.form-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+/* FORM INPUT STYLING */
+.input-group {
+    margin-bottom: 25px;
+}
+
+.input-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+}
+
+.styled-input, .styled-textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 15px;
+    color: white;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.styled-input:focus, .styled-textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+}
+
+.styled-textarea {
+    resize: vertical;
+    height: 120px;
+}
+
+/* FILE INPUT STYLING */
+.file-upload-box {
+    position: relative;
+    border: 2px dashed rgba(212, 175, 55, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    background: rgba(212, 175, 55, 0.05);
+    transition: 0.3s;
+}
+
+.file-upload-box:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: var(--gold);
+}
+
+.file-upload-box input[type=file] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* MAP SECTION STYLING */
+.map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.btn-gps {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-gps:hover {
+    background: var(--gold);
+    color: var(--dark-bg);
+}
+
+#map-picker {
+    height: 350px;
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    overflow: hidden;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+}
+
+.coords-display {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.coord-box input {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--glass-border);
+    color: rgba(255, 255, 255, 0.7);
+    cursor: not-allowed;
+}
+
+/* SUBMIT BUTTON */
+.btn-submit-premium {
+    grid-column: span 2;
+    width: 100%;
+    padding: 20px;
+    margin-top: 20px;
+    background: linear-gradient(45deg, var(--gold), #f9f295);
+    border: none;
+    border-radius: 16px;
+    color: var(--dark-bg);
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
+}
+
+.btn-submit-premium:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.3);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .form-layout { grid-template-columns: 1fr; gap: 30px; }
+    .btn-submit-premium { grid-column: span 1; }
 }
 </style>
 
-<div class="page-wrap">
-  <div class="glass-card">
-    <h2>📍 Add a Hidden Place</h2>
+<div class="add-page-wrap">
+    <div class="premium-card">
+        <div class="card-header">
+            <h2>📍 Secure New Discovery</h2>
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data" action="{% url 'add_hidden_place' %}">
+            {% csrf_token %}
+            
+            <div class="form-layout">
+                <div class="form-section">
+                    <div class="input-group">
+                        <label class="input-label">Discovery Title</label>
+                        <input type="text" name="title" class="styled-input" placeholder="e.g. The Azure Cenote" required>
+                    </div>
 
-    <form method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
+                    <div class="input-group">
+                        <label class="input-label">Destination / Region</label>
+                        <input type="text" name="destination" class="styled-input" placeholder="e.g. Tulum, Mexico" required>
+                    </div>
 
-      <input name="destination" placeholder="Destination (Ex: Pondicherry)" required>
-      <input name="title" placeholder="Hidden Place Name" required>
+                    <div class="input-group">
+                        <label class="input-label">The Story & Details</label>
+                        <textarea name="description" class="styled-textarea" placeholder="What makes this location unique? How do you get there?"></textarea>
+                    </div>
 
-      <textarea name="description" placeholder="Why is this place special?" required></textarea>
+                    <div class="input-group">
+                        <label class="input-label">Visual Evidence</label>
+                        <div class="file-upload-box">
+                            <span style="color:var(--gold); font-size:1.5rem;">📷</span>
+                            <p style="margin: 5px 0 0; font-size: 0.9rem; opacity: 0.8;">Click to upload a photo</p>
+                            <input type="file" name="photo" accept="image/*">
+                        </div>
+                    </div>
+                </div>
 
-      <label>📌 Click on map to select location</label>
-      <div id="map"></div>
+                <div class="map-section">
+                    <div class="map-header">
+                        <label class="input-label" style="margin-bottom:0;">Pinpoint Location</label>
+                        <button type="button" class="btn-gps" onclick="getLocation()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+                            Use My GPS
+                        </button>
+                    </div>
+                    
+                    <div id="map-picker"></div>
+                    
+                    <div class="coords-display">
+                        <div class="input-group coord-box">
+                            <label class="input-label">Latitude</label>
+                            <input type="number" step="any" name="latitude" id="lat-input" class="styled-input" readonly required>
+                        </div>
+                        <div class="input-group coord-box">
+                            <label class="input-label">Longitude</label>
+                            <input type="number" step="any" name="longitude" id="lng-input" class="styled-input" readonly required>
+                        </div>
+                    </div>
+                </div>
 
-      <!-- Hidden auto-filled fields -->
-      <input type="hidden" name="latitude" id="lat">
-      <input type="hidden" name="longitude" id="lng">
-
-      <label>📸 Upload Photo</label>
-      <input type="file" name="photo">
-
-      <button type="submit">Submit Hidden Place</button>
-    </form>
-  </div>
+                <button type="submit" class="btn-submit-premium">Publish to Global Atlas</button>
+            </div>
+        </form>
+    </div>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
-  var map = L.map('map').setView([20.5937, 78.9629], 5); // India center
+// 1. Initialize Map (Dark Mode Tiles)
+var map = L.map('map-picker', { zoomControl: false }).setView([20.0, 0.0], 3); // World view
+L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19
-  }).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    subdomains: 'abcd',
+    maxZoom: 20
+}).addTo(map);
 
-  var marker;
+var marker;
 
-  map.on('click', function(e) {
+// Custom Gold Marker Icon
+var goldIcon = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+
+// 2. Click to Pick Location
+map.on('click', function(e) {
+    updateMarker(e.latlng.lat, e.latlng.lng);
+});
+
+function updateMarker(lat, lng) {
     if (marker) {
-      map.removeLayer(marker);
+        marker.setLatLng([lat, lng]);
+    } else {
+        marker = L.marker([lat, lng], {icon: goldIcon, draggable: true}).addTo(map);
+        marker.on('dragend', function(event) {
+            var position = marker.getLatLng();
+            setInputValues(position.lat, position.lng);
+        });
     }
+    setInputValues(lat, lng);
+    map.panTo([lat, lng]);
+}
 
-    marker = L.marker(e.latlng).addTo(map);
+function setInputValues(lat, lng) {
+    document.getElementById('lat-input').value = lat.toFixed(6);
+    document.getElementById('lng-input').value = lng.toFixed(6);
+}
 
-    document.getElementById("lat").value = e.latlng.lat.toFixed(6);
-    document.getElementById("lng").value = e.latlng.lng.toFixed(6);
-  });
+// 3. GPS ACCESS with Animation
+function getLocation() {
+    const btn = document.querySelector('.btn-gps');
+    btn.innerHTML = '🛰️ Locating...';
+    btn.style.opacity = '0.7';
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+            map.flyTo([lat, lng], 15, { duration: 1.5 }); // Smooth animation
+            setTimeout(() => { updateMarker(lat, lng); }, 1500);
+            resetBtn();
+        }, function(error) {
+            alert("Could not get location. Please pick manually on the map.");
+            resetBtn();
+        }, { timeout: 10000 });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+        resetBtn();
+    }
+}
+
+function resetBtn() {
+    const btn = document.querySelector('.btn-gps');
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg> Use My GPS';
+    btn.style.opacity = '1';
+}
 </script>
 
 {% endblock %}
