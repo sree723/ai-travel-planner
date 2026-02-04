@@ -71,7 +71,7 @@ An intelligent, full-stack AI-powered travel planning system that generates trav
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/ai-travel-planner.git
+git clone https://github.com/sreedhar/ai-travel-planner.git
 cd ai-travel-planner
 ## Author
 Sreedhar — © 2026
